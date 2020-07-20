@@ -11,7 +11,7 @@
         android:background="@color/bg0"
         tools:context=".view.MainFragment">
 
-        <dev.faruke.helperclock.view.ClockView
+        <dev.faruke.helperclock.view.customViews.ClockView
             android:id="@+id/mainFragment_clock"
             android:layout_width="0dp"
             android:layout_height="0dp"

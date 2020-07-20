@@ -45,6 +45,7 @@ class MainViewModel : BaseViewModel() {
     }
 
     fun terminateButtonClick(context: Context?) {
+        pauseButtonEnable.value = false
         currentService = null
         if (context != null) {
             if (isStarted) {

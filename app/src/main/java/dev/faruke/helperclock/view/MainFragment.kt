@@ -24,7 +24,11 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (viewModel == null) viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        if (viewModel == null) {
+            viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+            mainFragment_pause.isEnabled = false
+        }
+
 
         mainFragment_start.setOnClickListener {
             viewModel!!.startButtonClick(context)

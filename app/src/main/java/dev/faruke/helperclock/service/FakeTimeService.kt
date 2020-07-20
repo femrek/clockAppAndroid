@@ -61,7 +61,6 @@ class FakeTimeService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        isRunning = true
         isStarted = true
 
         resumeService()
@@ -71,9 +70,7 @@ class FakeTimeService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        isRunning = false
-        mainFragmentViewModel!!.startButtonEnable.value = true
-        mHandler.removeCallbacks(mRunnable)
+        pauseService()
     }
 
     fun pauseService() {

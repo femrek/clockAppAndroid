@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ClockEditView">
+        <attr name="onClickAction" format="integer" >
+            <flag name="replace" value="0x01" />
+            <flag name="delete" value="0x02" />
+        </attr>
+    </declare-styleable>
+</resources>

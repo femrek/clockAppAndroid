@@ -1,4 +1,4 @@
-package dev.faruke.helperclock.view
+package dev.faruke.helperclock.view.customViews
 
 import android.content.Context
 import android.util.AttributeSet
@@ -45,7 +45,7 @@ class ClockView : ConstraintLayout {
             if (minute >= 60) {
                 error("minute big than 60 or equal")
             }
-            if (hour >= 60) {
+            if (hour >= 24) {
                 error("hour big than 24 or equal")
             }
         }
