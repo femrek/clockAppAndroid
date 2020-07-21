@@ -10,6 +10,28 @@ import kotlinx.android.synthetic.main.view_clock_edittext.view.*
 
 class ClockEditView : ConstraintLayout {
 
+    var valueHour : Int = 0
+    set(value) {
+        field = value
+        viewClockEdittext_text.text = "$value:$valueMinute"
+    }
+
+    var valueMinute : Int = 0
+    set(value) {
+        field = value
+        viewClockEdittext_text.text = "$valueHour:$value"
+    }
+
+    var type : Int = 0x00
+    set(value) {
+        field = value
+        if (field == TYPE_REPLACE) {
+            replaceSettings()
+        } else if (field == TYPE_DELETE) { //delete
+            deleteSettings()
+        }
+    }
+
     constructor(context: Context?) : super(context) {
         init()
     }
@@ -31,36 +53,34 @@ class ClockEditView : ConstraintLayout {
         View.inflate(context, R.layout.view_clock_edittext, this)
     }
 
-
-
     private fun init(attrs: AttributeSet?) {
         init()
         val ta = context.obtainStyledAttributes(attrs, R.styleable.ClockEditView, 0, 0)
         try {
-            val clickAction = ta.getInt(R.styleable.ClockEditView_onClickAction, 0x00)
-            if (clickAction != 0x00) {
-                if (clickAction == 0x01) { //replace
-                    replaceSettings()
-                } else { //delete
-                    deleteSettings()
-                }
-            }
+            val attrClickAction = ta.getInt(R.styleable.ClockEditView_onClickAction, 0x00)
+            val attrValueHour = ta.getInt(R.styleable.ClockEditView_valueHour, 0)
+            val attrValueMinute = ta.getInt(R.styleable.ClockEditView_valueMinute, 0)
+            type = attrClickAction
+            valueHour = attrValueHour
+            valueMinute = attrValueMinute
         } finally {
             ta.recycle()
         }
     }
 
+
+
     private fun replaceSettings() {
         viewClockEdittext_icon.setImageResource(R.drawable.ic_icon_replace_black)
-        setOnClickListener {
-            //todo show dialog for change clock
-        }
     }
 
     private fun deleteSettings() {
         viewClockEdittext_icon.setImageResource(R.drawable.ic_icon_delete_red)
-        setOnClickListener {
-            //todo show dialog for delete view
-        }
+    }
+
+
+    companion object {
+        const val TYPE_REPLACE: Int = 0X01
+        const val TYPE_DELETE: Int = 0x02
     }
 }

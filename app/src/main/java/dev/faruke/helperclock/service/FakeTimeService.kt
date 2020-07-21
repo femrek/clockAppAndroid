@@ -25,6 +25,7 @@ class FakeTimeService : Service() {
     override fun onCreate() {
         super.onCreate()
         startForeground()
+        mainFragmentViewModel?.cancelButtonEnable?.value = true
         currentService = this
         mHandler = Handler()
     }

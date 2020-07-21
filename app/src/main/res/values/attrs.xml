@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="ClockEditView">
-        <attr name="onClickAction" format="integer" >
+        <attr name="onClickAction" format="integer">
             <flag name="replace" value="0x01" />
             <flag name="delete" value="0x02" />
         </attr>
+        <attr name="valueHour" format="integer" />
+        <attr name="valueMinute" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="ClockPatternCheckbox">
+        <attr name="checked" format="boolean" />
+        <attr name="title" format="string" />
     </declare-styleable>
 </resources>

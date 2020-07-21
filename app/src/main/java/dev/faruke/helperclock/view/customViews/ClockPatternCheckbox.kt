@@ -16,20 +16,41 @@ class ClockPatternCheckbox : ConstraintLayout, Checkable{
         init()
     }
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
-        init()
+        init(attrs)
     }
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
     ) {
-        init()
+        init(attrs)
     }
 
-    fun init() {
+    private fun init() {
         View.inflate(context, R.layout.view_clock_pattern_checkbox, this)
         setOnClickListener {
             toggle()
+        }
+    }
+
+    private fun init(attrs: AttributeSet?) {
+        init()
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.ClockPatternCheckbox, 0, 0)
+        try {
+            val attrChecked = ta.getBoolean(R.styleable.ClockPatternCheckbox_checked, false)
+            val attrTitle = ta.getString(R.styleable.ClockPatternCheckbox_title)
+            setChecked(attrChecked)
+            if (attrChecked) { //replace
+                checkedSettings()
+            } else { //delete
+                uncheckedSettings()
+            }
+
+            if (attrTitle != null) {
+                viewClock_patternCheckbox_text.text = attrTitle
+            }
+        } finally {
+            ta.recycle()
         }
     }
 

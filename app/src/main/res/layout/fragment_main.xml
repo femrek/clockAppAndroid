@@ -51,7 +51,7 @@
             android:id="@+id/mainFragment_terminateButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_cancel_button"
+            android:src="@drawable/selector_cancel_button"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="@+id/mainFragment_start"
             app:layout_constraintEnd_toEndOf="parent"

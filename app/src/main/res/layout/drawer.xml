@@ -57,8 +57,8 @@
                 <dev.faruke.helperclock.view.customViews.ClockEditView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:onClickAction="replace"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    app:onClickAction="replace" />
 
 
                 <View
@@ -74,14 +74,13 @@
                     android:layout_marginTop="8dp"
                     android:text="Bitiş"
                     android:textColor="@color/onBg"
-                    android:textSize="24sp"
-                    />
+                    android:textSize="24sp" />
 
                 <dev.faruke.helperclock.view.customViews.ClockEditView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:onClickAction="replace"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    app:onClickAction="replace" />
 
 
                 <View
@@ -97,78 +96,96 @@
                     android:layout_marginTop="8dp"
                     android:text="Uyarılar"
                     android:textColor="@color/onBg"
-                    android:textSize="24sp"
-                    />
+                    android:textSize="24sp" />
 
-                <dev.faruke.helperclock.view.customViews.ClockEditView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/drawer_tile0_ringsLayout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:onClickAction="delete"
-                    android:layout_marginTop="8dp" />
+                    android:orientation="vertical" >
 
-                <dev.faruke.helperclock.view.customViews.ClockEditView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:onClickAction="delete"
-                    android:layout_marginTop="8dp" />
+                    <dev.faruke.helperclock.view.customViews.ClockEditView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:onClickAction="delete" />
 
+                    <dev.faruke.helperclock.view.customViews.ClockEditView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:onClickAction="delete" />
+
+
+                </LinearLayout>
                 <dev.faruke.helperclock.view.customViews.AddButton
+                    android:id="@+id/drawer_addRing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"/>
+                    android:layout_marginTop="8dp" />
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/drawer_tile1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:background="@color/bg2"
+                android:orientation="vertical"
                 android:paddingStart="16dp"
                 android:paddingLeft="16dp"
                 android:paddingTop="8dp"
                 android:paddingEnd="16dp"
                 android:paddingRight="16dp"
-                android:paddingBottom="8dp"
-                android:orientation="vertical"
-                >
+                android:paddingBottom="8dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Saati sınava göre ayarla"
                     android:textColor="@color/onBg"
-                    android:textSize="24sp"
-                    />
+                    android:textSize="24sp" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:background="@color/bg0" />
 
-                <dev.faruke.helperclock.view.customViews.ClockPatternCheckbox
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/drawer_tile1_patternsLayout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    />
+                    android:orientation="vertical">
 
-                <dev.faruke.helperclock.view.customViews.ClockPatternCheckbox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    />
+                    <dev.faruke.helperclock.view.customViews.ClockPatternCheckbox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:checked="true"
+                        app:title="TYT" />
+
+                    <dev.faruke.helperclock.view.customViews.ClockPatternCheckbox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:checked="false"
+                        app:title="AYT" />
+                </LinearLayout>
 
                 <dev.faruke.helperclock.view.customViews.AddButton
+                    android:id="@+id/drawer_addPattern"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    />
+                    android:onClick="addClickListener" />
 
             </LinearLayout>
 
         </LinearLayout>
 
     </ScrollView>
+
 
 
 </FrameLayout>

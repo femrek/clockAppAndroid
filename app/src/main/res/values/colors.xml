@@ -10,7 +10,7 @@
     <color name="bg2">#000000</color>
 
     <color name="onBg">#ffffff</color>
-    <color name="onBgDisabled">#B5B5B5</color>
+    <color name="onBgDisabled">#747474</color>
     <color name="onPrimary">#ffffff</color>
 
     <color name="clockEditViewBg">#ffffff</color>
