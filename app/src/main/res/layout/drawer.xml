@@ -103,20 +103,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical" >
 
-                    <dev.faruke.helperclock.view.customViews.RingClockCheckbox
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:onClick="ringClockClick"
-                        app:actionType="ring_enabled" />
-
-                    <dev.faruke.helperclock.view.customViews.RingClockCheckbox
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:onClick="ringClockClick"
-                        app:actionType="ring_disabled" />
-
                 </LinearLayout>
 
             </LinearLayout>

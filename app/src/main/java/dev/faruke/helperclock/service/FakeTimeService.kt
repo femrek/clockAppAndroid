@@ -126,8 +126,10 @@ class FakeTimeService : Service() {
         var ringClocks: ArrayList<TimeModel>? = null
             set(value) {
                 field = value
+                mutedRings.clear()
                 setNextClock()
             }
+        val mutedRings: ArrayList<TimeModel> = ArrayList()
 
         private fun setNextClock() {
             if (endClock != null && ringClocks != null && mainFragmentViewModel != null && mainFragmentViewModel!!.time.value != null) {
