@@ -53,17 +53,7 @@ class MainFragment : Fragment() {
             dialog.show()
         }
 
-        val header = view.rootView.findViewById<NavigationView>(R.id.navigationView).getHeaderView(0)
-        val patternsLayout = header.findViewById<LinearLayout>(R.id.drawer_tile1_patternsLayout)
-        val tytCheckbox = ClockPatternCheckbox(requireContext())
-        tytCheckbox.pattern = PatternModel("TYT", 10, 15, 13, 0, "12,55;12,59;")
-        val aytCheckbox = ClockPatternCheckbox(requireContext())
-        aytCheckbox.pattern = PatternModel("AYT", 10, 15, 13, 15, "13,10;13,14;")
-        tytCheckbox.setOnClickListener(patternCheckboxClickListener)
-        aytCheckbox.setOnClickListener(patternCheckboxClickListener)
-        patternsLayout.addView(tytCheckbox)
-        patternsLayout.addView(aytCheckbox)
-        selectedPatternView = tytCheckbox
+        addDefaultPatterns(view)
 
         observeLiveData()
     }
@@ -77,11 +67,7 @@ class MainFragment : Fragment() {
                 if (value.pattern != null) {
                     startClock =
                         TimeModel(value.pattern!!.startHour, value.pattern!!.startMinute, 0)
-                    if (viewModel != null) {
-                        viewModel!!.time.value = startClock
-                    } else {
-                        println("view model is null")
-                    }
+                    viewModel?.let { it.time.value = startClock }
                     endClock = TimeModel(value.pattern!!.endHour, value.pattern!!.endMinute, 0)
                     ringClocks =
                         UtilFuns.convertRingsStringToTimeModelArrayList(value.pattern!!.ringsList)
@@ -89,8 +75,12 @@ class MainFragment : Fragment() {
             }
         }
 
+    private fun updateCurrentPatternOnTheDrawer(drawerHeader: View) {
 
-    val patternCheckboxClickListener = View.OnClickListener {
+    }
+
+
+    private val patternCheckboxClickListener = View.OnClickListener {
         val checkboxView = it as ClockPatternCheckbox
         selectedPatternView = checkboxView
     }
@@ -113,5 +103,19 @@ class MainFragment : Fragment() {
         viewModel!!.cancelButtonEnable.observe(viewLifecycleOwner, Observer {enable ->
             mainFragment_terminateButton.isEnabled = enable
         })
+    }
+
+    private fun addDefaultPatterns(mainFragmentView: View) {
+        val header = mainFragmentView.rootView.findViewById<NavigationView>(R.id.navigationView).getHeaderView(0)
+        val patternsLayout = header.findViewById<LinearLayout>(R.id.drawer_tile1_patternsLayout)
+        val tytCheckbox = ClockPatternCheckbox(requireContext())
+        tytCheckbox.pattern = PatternModel("TYT", 10, 15, 13, 0, "12,55;12,59;")
+        val aytCheckbox = ClockPatternCheckbox(requireContext())
+        aytCheckbox.pattern = PatternModel("AYT", 10, 15, 13, 15, "13,10;13,14;")
+        tytCheckbox.setOnClickListener(patternCheckboxClickListener)
+        aytCheckbox.setOnClickListener(patternCheckboxClickListener)
+        patternsLayout.addView(tytCheckbox)
+        patternsLayout.addView(aytCheckbox)
+        selectedPatternView = tytCheckbox
     }
 }

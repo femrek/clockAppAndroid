@@ -54,6 +54,7 @@
                     android:textSize="24sp" />
 
                 <dev.faruke.helperclock.view.customViews.ClockViewer
+                    android:id="@+id/drawer_tile0_startClock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"/>
@@ -75,6 +76,7 @@
                     android:textSize="24sp" />
 
                 <dev.faruke.helperclock.view.customViews.ClockViewer
+                    android:id="@+id/drawer_tile0_endClock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp" />
@@ -115,14 +117,7 @@
                         android:onClick="ringClockClick"
                         app:actionType="ring_disabled" />
 
-
                 </LinearLayout>
-                <dev.faruke.helperclock.view.customViews.AddButton
-                    android:id="@+id/drawer_addRing"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:onClick="addClickListener" />
 
             </LinearLayout>
 

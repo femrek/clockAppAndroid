@@ -1,6 +1,5 @@
 package dev.faruke.helperclock.service
 
-import android.R
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -44,7 +43,7 @@ class FakeTimeService : Service() {
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId )
         val notification = notificationBuilder.setOngoing(true)
-            .setSmallIcon(R.drawable.sym_def_app_icon)
+            .setSmallIcon(android.R.drawable.sym_def_app_icon)
             .setPriority(PRIORITY_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
             .build()
@@ -85,9 +84,14 @@ class FakeTimeService : Service() {
     fun resumeService() {
         isRunning = true
         var currentClock: TimeModel
+        val resumeTime: Long = System.currentTimeMillis()
+        //println("resume time: $resumeTime")
+        var tickCounter = 0
         mRunnable = Runnable {
+            //println("runnable start time: ${System.currentTimeMillis()}")
             if(isRunning) {
-                mHandler.postDelayed(mRunnable, 1000)
+                tickCounter++
+                mHandler.postDelayed(mRunnable, resumeTime + ((tickCounter+1)*1000) - System.currentTimeMillis() ) //978-985
                 currentClock = UtilFuns.nextSecond(mainFragmentViewModel!!.time.value!!)
                 mainFragmentViewModel!!.time.value = currentClock
                 if (currentClock.minute == nextClock!!.minute && currentClock.hour == nextClock!!.hour) {
@@ -95,7 +99,7 @@ class FakeTimeService : Service() {
                     setNextClock()
                 }
             }
-            println("tick")
+            //println("runnable end time: ${System.currentTimeMillis()}")
         }
         mHandler.postDelayed(mRunnable, 1000)
 
