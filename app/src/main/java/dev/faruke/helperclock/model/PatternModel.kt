@@ -35,7 +35,7 @@ data class PatternModel(
 
     @ColumnInfo(name = "ringsList")
     @SerializedName("startHour")
-    val ringsList: String?
+    val ringsList: String
 ) {
     @PrimaryKey(autoGenerate = true)
     var id = 0

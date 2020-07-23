@@ -1,5 +1,8 @@
 package dev.faruke.helperclock.util
 
+import android.content.Context
+import android.content.res.Resources
+import android.util.TypedValue
 import dev.faruke.helperclock.model.TimeModel
 
 abstract class UtilFuns {
@@ -23,6 +26,24 @@ abstract class UtilFuns {
                     }
                 }
             }
+        }
+
+        fun dpToPx(context: Context, dp: Float) : Float {
+            val r: Resources = context.resources
+            return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp,
+                r.displayMetrics
+            )
+        }
+
+        fun spToPx(context: Context, sp: Float) : Float {
+            val r: Resources = context.resources
+            return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                sp,
+                r.displayMetrics
+            )
         }
 
         fun convertRingsListToString(list: ArrayList<ArrayList<Int>>): String {
@@ -57,8 +78,30 @@ abstract class UtilFuns {
                 }
                 startIndex = string.indexOf(";", startIndex) + 1
                 result.add(rowList)
+            }
 
-                println("i: $i;")
+            return result
+        }
+
+        fun convertRingsStringToTimeModelArrayList(string: String): ArrayList<TimeModel> {
+            val result: ArrayList<TimeModel> = ArrayList()
+
+            var startIndex = 0
+            val rowCount = string.count { ";".contains(it) }
+            for (i in 0 until rowCount) {
+                val rowList: ArrayList<Int> = ArrayList()
+                val rowString = string.substring(startIndex, string.indexOf(';', startIndex))
+                var commaStartIndex = 0
+                for (j in 0..rowString.count { ",".contains(it) }) {
+                    val commaIndex = rowString.indexOf(",", commaStartIndex)
+                    rowList.add(
+                        rowString.substring(commaStartIndex, (if (commaIndex > 0) commaIndex else rowString.length)).toInt()
+                    )
+                    commaStartIndex = commaIndex + 1
+                }
+                startIndex = string.indexOf(";", startIndex) + 1
+                result.add(TimeModel(rowList[0], rowList[1], 0))
+
             }
 
             return result

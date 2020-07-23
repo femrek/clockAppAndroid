@@ -5,10 +5,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.navigation.NavigationView
 import dev.faruke.helperclock.R
+import dev.faruke.helperclock.model.PatternModel
+import dev.faruke.helperclock.model.TimeModel
+import dev.faruke.helperclock.service.FakeTimeService.Companion.endClock
+import dev.faruke.helperclock.service.FakeTimeService.Companion.ringClocks
+import dev.faruke.helperclock.service.FakeTimeService.Companion.startClock
 import dev.faruke.helperclock.util.UtilFuns
+import dev.faruke.helperclock.view.customViews.ClockPatternCheckbox
 import dev.faruke.helperclock.view.dialogs.ConfirmShutdownServiceDialog
 import dev.faruke.helperclock.service.FakeTimeService.Companion.mainFragmentViewModel as viewModel
 import dev.faruke.helperclock.viewmodel.MainViewModel
@@ -32,9 +40,8 @@ class MainFragment : Fragment() {
             mainFragment_terminateButton.isEnabled = false
         }
 
-
         mainFragment_start.setOnClickListener {
-            viewModel!!.startButtonClick(context)
+            viewModel!!.startButtonClick(context, this)
         }
 
         mainFragment_pause.setOnClickListener {
@@ -42,24 +49,50 @@ class MainFragment : Fragment() {
         }
 
         mainFragment_terminateButton.setOnClickListener {
-            val dialog = ConfirmShutdownServiceDialog(requireContext())
+            val dialog = ConfirmShutdownServiceDialog(requireContext(), requireActivity())
             dialog.show()
-
         }
 
-        /*val list: ArrayList<ArrayList<Int>> = ArrayList()
-        for (i in 0..4) {
-            val rowlist: ArrayList<Int> = ArrayList()
-            for (j in 0..1) {
-                rowlist.add(12+i+j)
-            }
-            list.add(rowlist)
-        }
-        println(UtilFuns.convertRingsListToString(list))*/
-
-        //println(UtilFuns.convertRingsStringToArrayList("12,13;13,14;14,15;15,16;16,17;").toString())
+        val header = view.rootView.findViewById<NavigationView>(R.id.navigationView).getHeaderView(0)
+        val patternsLayout = header.findViewById<LinearLayout>(R.id.drawer_tile1_patternsLayout)
+        val tytCheckbox = ClockPatternCheckbox(requireContext())
+        tytCheckbox.pattern = PatternModel("TYT", 10, 15, 13, 0, "12,55;12,59;")
+        val aytCheckbox = ClockPatternCheckbox(requireContext())
+        aytCheckbox.pattern = PatternModel("AYT", 10, 15, 13, 15, "13,10;13,14;")
+        tytCheckbox.setOnClickListener(patternCheckboxClickListener)
+        aytCheckbox.setOnClickListener(patternCheckboxClickListener)
+        patternsLayout.addView(tytCheckbox)
+        patternsLayout.addView(aytCheckbox)
+        selectedPatternView = tytCheckbox
 
         observeLiveData()
+    }
+
+    var selectedPatternView: ClockPatternCheckbox? = null
+        set(value) {
+            field?.setChecked(false)
+            field = value
+            if (value != null) {
+                value.setChecked(true)
+                if (value.pattern != null) {
+                    startClock =
+                        TimeModel(value.pattern!!.startHour, value.pattern!!.startMinute, 0)
+                    if (viewModel != null) {
+                        viewModel!!.time.value = startClock
+                    } else {
+                        println("view model is null")
+                    }
+                    endClock = TimeModel(value.pattern!!.endHour, value.pattern!!.endMinute, 0)
+                    ringClocks =
+                        UtilFuns.convertRingsStringToTimeModelArrayList(value.pattern!!.ringsList)
+                }
+            }
+        }
+
+
+    val patternCheckboxClickListener = View.OnClickListener {
+        val checkboxView = it as ClockPatternCheckbox
+        selectedPatternView = checkboxView
     }
 
 

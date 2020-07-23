@@ -1,5 +1,6 @@
 package dev.faruke.helperclock.viewmodel
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
@@ -11,9 +12,11 @@ import dev.faruke.helperclock.model.TimeModel
 import dev.faruke.helperclock.service.FakeTimeService
 import dev.faruke.helperclock.service.FakeTimeService.Companion.currentService
 import dev.faruke.helperclock.service.FakeTimeService.Companion.isRunning
-import dev.faruke.helperclock.service.FakeTimeService.Companion.isStarted
+import dev.faruke.helperclock.service.FakeTimeService.Companion.mainActivity
 import dev.faruke.helperclock.service.PatternDatabase
 import dev.faruke.helperclock.util.UtilFuns
+import dev.faruke.helperclock.view.MainActivity
+import dev.faruke.helperclock.view.MainFragment
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
@@ -24,14 +27,15 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     val cancelButtonEnable = MutableLiveData<Boolean>()
 
 
-    fun startButtonClick(context: Context?) {
+    fun startButtonClick(context: Context?, mainFragment: MainFragment) {
         startButtonEnable.value = false
 
         if (currentService != null) {
             resumeService()
         } else {
             val intent = Intent(context, FakeTimeService::class.java)
-            time.value = TimeModel(10,15,0)
+            val pattern = mainFragment.selectedPatternView!!.pattern
+            time.value = TimeModel(pattern?.startHour ?: 1, pattern?.startMinute ?: 30,0)
             if (context != null) {
                 if (!isRunning) {
                     startService(intent, context)
@@ -52,14 +56,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     fun terminateButtonClick(context: Context?) {
         pauseButtonEnable.value = false
         cancelButtonEnable.value = false
-        currentService = null
         if (context != null) {
-            if (isStarted) {
-                val intent = Intent(context, FakeTimeService::class.java)
-                stopService(intent, context)
-            } else {
-                Toast.makeText(context, "saat zaten çalışmıyor", Toast.LENGTH_LONG).show()
-            }
+            val intent = Intent(context, FakeTimeService::class.java)
+            stopService(intent, context)
         }
     }
 

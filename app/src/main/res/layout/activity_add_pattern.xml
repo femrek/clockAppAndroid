@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context=".view.AddPatternActivity" >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/addPatternActivity_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:background="@color/bg0"
+        app:title="@string/app_name"
+        app:titleTextColor="@color/onBg" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.AddPatternActivity">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg0"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/bg2"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+
+                        <EditText
+                            android:id="@+id/dialogAddPattern_titleEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Sınav ismini buraya girin"
+                            android:importantForAutofill="no"
+                            android:inputType="text"
+                            android:textColor="@color/onBg"
+                            android:textColorHint="@color/onBgDisabled"
+                            android:textSize="24sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/dialogAddPattern_tile0"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="@color/bg2"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Başlangıç Saati"
+                            android:textColor="@color/onBg"
+                            android:textSize="24sp" />
+
+                        <dev.faruke.helperclock.view.customViews.ClockEditView
+                            android:id="@+id/dialogAddPattern_startTimeView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            app:actionType="replace" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/dialogAddPattern_tile1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="@color/bg2"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Bitiş Saati"
+                            android:textColor="@color/onBg"
+                            android:textSize="24sp" />
+
+                        <dev.faruke.helperclock.view.customViews.ClockEditView
+                            android:id="@+id/dialogAddPattern_endTimeView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            app:actionType="replace" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/dialogAddPattern_tile2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="@color/bg2"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Uyarı Saatleri"
+                            android:textColor="@color/onBg"
+                            android:textSize="24sp" />
+
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/dialogAddPattern_ringsRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <dev.faruke.helperclock.view.customViews.AddButton
+                            android:id="@+id/dialogAddPattern_addRing"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/addPatternActivity_errorMessage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:visibility="invisible"
+                        android:gravity="center"
+                        android:textSize="24sp"
+                        android:textColor="@color/waring"
+                        />
+
+                </LinearLayout>
+
+            </ScrollView>
+
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:gravity="right"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <Button
+                    android:id="@+id/dialogAddPattern_cancelButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_bg_waring"
+                    android:paddingStart="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingRight="16dp"
+                    android:text="İptal"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp" />
+
+
+                <Button
+                    android:id="@+id/dialogAddPattern_saveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@drawable/custom_add_button_view_bg"
+                    android:paddingStart="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingRight="16dp"
+                    android:text="Kaydet"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+
+</LinearLayout>
+

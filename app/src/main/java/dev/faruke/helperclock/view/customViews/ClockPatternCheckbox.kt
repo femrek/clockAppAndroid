@@ -4,21 +4,30 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.Checkable
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.widget.FrameLayout
 import dev.faruke.helperclock.R
+import dev.faruke.helperclock.model.PatternModel
 import kotlinx.android.synthetic.main.view_clock_pattern_checkbox.view.*
 
-class ClockPatternCheckbox : ConstraintLayout, Checkable{
+class ClockPatternCheckbox : FrameLayout, Checkable{
 
     private var checked = false
+    var pattern: PatternModel? = null
+        set(value) {
+            field = value
+            if (value != null) {
+                viewClock_patternCheckbox_text.text = value.title
+            }
+        }
 
-    constructor(context: Context?) : super(context) {
+    constructor(context: Context) : super(context) {
         init()
+        setChecked(false)
     }
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init(attrs)
     }
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
@@ -28,9 +37,6 @@ class ClockPatternCheckbox : ConstraintLayout, Checkable{
 
     private fun init() {
         View.inflate(context, R.layout.view_clock_pattern_checkbox, this)
-        setOnClickListener {
-            toggle()
-        }
     }
 
     private fun init(attrs: AttributeSet?) {

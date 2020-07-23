@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg0"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true" >
 
     <ScrollView
         android:layout_width="match_parent"
@@ -54,11 +53,10 @@
                     android:textColor="@color/onBg"
                     android:textSize="24sp" />
 
-                <dev.faruke.helperclock.view.customViews.ClockEditView
+                <dev.faruke.helperclock.view.customViews.ClockViewer
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:onClickAction="replace" />
+                    android:layout_marginTop="8dp"/>
 
 
                 <View
@@ -76,11 +74,10 @@
                     android:textColor="@color/onBg"
                     android:textSize="24sp" />
 
-                <dev.faruke.helperclock.view.customViews.ClockEditView
+                <dev.faruke.helperclock.view.customViews.ClockViewer
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:onClickAction="replace" />
+                    android:layout_marginTop="8dp" />
 
 
                 <View
@@ -104,17 +101,19 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical" >
 
-                    <dev.faruke.helperclock.view.customViews.ClockEditView
+                    <dev.faruke.helperclock.view.customViews.RingClockCheckbox
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        app:onClickAction="delete" />
+                        android:onClick="ringClockClick"
+                        app:actionType="ring_enabled" />
 
-                    <dev.faruke.helperclock.view.customViews.ClockEditView
+                    <dev.faruke.helperclock.view.customViews.RingClockCheckbox
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        app:onClickAction="delete" />
+                        android:onClick="ringClockClick"
+                        app:actionType="ring_disabled" />
 
 
                 </LinearLayout>
@@ -122,7 +121,8 @@
                     android:id="@+id/drawer_addRing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    android:onClick="addClickListener" />
 
             </LinearLayout>
 
@@ -133,6 +133,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@color/bg2"
                 android:orientation="vertical"
+                android:layout_marginBottom="16dp"
                 android:paddingStart="16dp"
                 android:paddingLeft="16dp"
                 android:paddingTop="8dp"
@@ -156,22 +157,7 @@
                     android:id="@+id/drawer_tile1_patternsLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <dev.faruke.helperclock.view.customViews.ClockPatternCheckbox
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        app:checked="true"
-                        app:title="TYT" />
-
-                    <dev.faruke.helperclock.view.customViews.ClockPatternCheckbox
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        app:checked="false"
-                        app:title="AYT" />
-                </LinearLayout>
+                    android:orientation="vertical"/>
 
                 <dev.faruke.helperclock.view.customViews.AddButton
                     android:id="@+id/drawer_addPattern"

@@ -11,7 +11,9 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
+import dev.faruke.helperclock.model.TimeModel
 import dev.faruke.helperclock.util.UtilFuns
+import dev.faruke.helperclock.view.MainActivity
 import dev.faruke.helperclock.viewmodel.MainViewModel
 
 
@@ -62,7 +64,6 @@ class FakeTimeService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        isStarted = true
 
         resumeService()
 
@@ -72,6 +73,7 @@ class FakeTimeService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         pauseService()
+        currentService = null
     }
 
     fun pauseService() {
@@ -82,11 +84,18 @@ class FakeTimeService : Service() {
 
     fun resumeService() {
         isRunning = true
+        var currentClock: TimeModel
         mRunnable = Runnable {
             if(isRunning) {
                 mHandler.postDelayed(mRunnable, 1000)
-                mainFragmentViewModel!!.time.value = UtilFuns.nextSecond(mainFragmentViewModel!!.time.value!!)
+                currentClock = UtilFuns.nextSecond(mainFragmentViewModel!!.time.value!!)
+                mainFragmentViewModel!!.time.value = currentClock
+                if (currentClock.minute == nextClock!!.minute && currentClock.hour == nextClock!!.hour) {
+                    //todo : ring
+                    setNextClock()
+                }
             }
+            println("tick")
         }
         mHandler.postDelayed(mRunnable, 1000)
 
@@ -96,11 +105,50 @@ class FakeTimeService : Service() {
     companion object {
         var mainFragmentViewModel : MainViewModel? = null
         var currentService : FakeTimeService? = null
+        var mainActivity: MainActivity? = null
 
         var isRunning: Boolean = false
-        var isStarted: Boolean = false
 
         const val CHANNEL_ID = "notificationChannelID"
+
+
+        var nextClock: TimeModel? = null
+        var startClock: TimeModel? = null
+        var endClock: TimeModel? = null
+            set(value) {
+                field = value
+                setNextClock()
+            }
+        var ringClocks: ArrayList<TimeModel>? = null
+            set(value) {
+                field = value
+                setNextClock()
+            }
+
+        private fun setNextClock() {
+            if (endClock != null && ringClocks != null && mainFragmentViewModel != null && mainFragmentViewModel!!.time.value != null) {
+                val allClockList = ArrayList<TimeModel>()
+                allClockList.addAll(ringClocks!!)
+                allClockList.add(endClock!!)
+
+                val currentClock = mainFragmentViewModel!!.time.value!!
+                for (savedClock in allClockList) {
+                    if (currentClock.hour <= savedClock.hour){
+                        if (currentClock.hour < savedClock.hour) {
+                            nextClock = savedClock
+                            return
+                        } else if (currentClock.hour == savedClock.hour){
+                            if(currentClock.minute < savedClock.minute) {
+                                nextClock = savedClock
+                                return
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
 
 }
