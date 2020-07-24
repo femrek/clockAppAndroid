@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import dev.faruke.helperclock.R
+import dev.faruke.helperclock.util.UtilFuns.Companion.clockToString
 import kotlinx.android.synthetic.main.view_clock_viewer.view.*
 
 open class ClockViewer : ConstraintLayout {
@@ -15,13 +16,13 @@ open class ClockViewer : ConstraintLayout {
     var valueHour : Int = 0
         set(value) {
             field = value
-            clockTextView?.text = clockString()
+            clockTextView?.text = clockToString(valueHour, valueMinute, null)
         }
 
     var valueMinute : Int = 0
         set(value) {
             field = value
-            clockTextView?.text = clockString()
+            clockTextView?.text = clockToString(valueHour, valueMinute, null)
         }
 
     constructor(context: Context?) : super(context) {
@@ -56,20 +57,5 @@ open class ClockViewer : ConstraintLayout {
             ta.recycle()
         }
     }
-
-
-    private fun clockString() : String {
-        var result = ""
-
-        if (valueHour < 10) result +="0"
-        result += "$valueHour:"
-
-        if (valueMinute < 10) result += "0"
-        result += "$valueMinute"
-
-        return result
-    }
-
-
 
 }

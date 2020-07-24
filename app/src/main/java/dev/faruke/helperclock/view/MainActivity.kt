@@ -51,8 +51,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun ringClockClick(view: View?) {
-        (view as RingClockCheckbox).toggle()
+    override fun onRestart() {
+        super.onRestart()
+        println("on restart")
+        if (fragment is MainFragment){
+            val mainFragment = fragment as MainFragment
+            mainFragment.addPatterns()
+        } else println("fragment is not main fragment")
     }
 
 }

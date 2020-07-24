@@ -1,11 +1,12 @@
 package dev.faruke.helperclock.viewmodel
 
-import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.widget.Toast
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.lifecycle.MutableLiveData
 import dev.faruke.helperclock.model.PatternModel
 import dev.faruke.helperclock.model.TimeModel
@@ -13,10 +14,12 @@ import dev.faruke.helperclock.service.FakeTimeService
 import dev.faruke.helperclock.service.FakeTimeService.Companion.currentService
 import dev.faruke.helperclock.service.FakeTimeService.Companion.isRunning
 import dev.faruke.helperclock.service.FakeTimeService.Companion.mainActivity
+import dev.faruke.helperclock.service.FakeTimeService.Companion.startClock
 import dev.faruke.helperclock.service.PatternDatabase
 import dev.faruke.helperclock.util.UtilFuns
-import dev.faruke.helperclock.view.MainActivity
 import dev.faruke.helperclock.view.MainFragment
+import dev.faruke.helperclock.view.customViews.ClockPatternCheckbox
+import dev.faruke.helperclock.view.customViews.ClockPatternCheckboxWithActions
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
@@ -25,6 +28,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     val pauseButtonEnable = MutableLiveData<Boolean>()
     val startButtonEnable = MutableLiveData<Boolean>()
     val cancelButtonEnable = MutableLiveData<Boolean>()
+    val refreshPatternsCheckboxes = MutableLiveData<Boolean>()
 
 
     fun startButtonClick(context: Context?, mainFragment: MainFragment) {
@@ -77,9 +81,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun stopService(intent: Intent, context: Context) {
-        time.value = TimeModel(0,0,0)
+        time.value = startClock ?: TimeModel(0,0,0)
         context.stopService(intent)
     }
+
 
 
 
@@ -89,22 +94,39 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             val pattern = PatternModel(sessionTitle, startHour, startMinute, endHour, endMinute, UtilFuns.convertRingsListToString(ringsList))
             val dao = PatternDatabase(getApplication()).patternDao()
             val id = dao.insertPattern(pattern)
+            refreshPatternsCheckboxes.value = true
         }
     }
 
+    fun readPatternsFromDBAndShowIn(parentView: ViewGroup, mainFragment: MainFragment) {
+        launch {
+            val dao = PatternDatabase(getApplication()).patternDao()
+            val lp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+            lp.setMargins(0,UtilFuns.dpToPx(mainFragment.requireContext(), 8f).toInt(),0,0)
+            for (pattern in dao.getAllPatterns()) {
+                val clockPatternCheckboxWithActions = ClockPatternCheckboxWithActions(mainFragment.requireContext())
+                clockPatternCheckboxWithActions.clockPatternCheckbox!!.pattern = pattern
+                clockPatternCheckboxWithActions.clockPatternCheckbox!!.setOnClickListener(mainFragment.patternCheckboxClickListener)
+                clockPatternCheckboxWithActions.setReplaceClickListener(View.OnClickListener {
+                    //todo start add pattern activity
+                })
+                clockPatternCheckboxWithActions.setDeleteClickListener(View.OnClickListener {
+                    deletePatternOf(clockPatternCheckboxWithActions.clockPatternCheckbox!!, mainFragment)
+                })
+                clockPatternCheckboxWithActions.layoutParams = lp
+                parentView.addView(clockPatternCheckboxWithActions)
+            }
+        }
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    fun deletePatternOf(clockPatternCheckbox: ClockPatternCheckbox, mainFragment: MainFragment) {
+        launch {
+            if (clockPatternCheckbox.pattern != null) {
+                val patternId = clockPatternCheckbox.pattern!!.id
+                val dao = PatternDatabase(getApplication()).patternDao()
+                dao.deletePatternAt(patternId)
+                mainFragment.addPatterns()
+            }
+        }
+    }
 }

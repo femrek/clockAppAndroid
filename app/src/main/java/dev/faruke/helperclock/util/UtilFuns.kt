@@ -46,6 +46,22 @@ abstract class UtilFuns {
             )
         }
 
+        fun clockToString(hour: Int, minute: Int, second: Int?) : String {
+            var result = ""
+
+            if (hour < 10) result +="0"
+            result += "$hour:"
+
+            if (minute < 10) result += "0"
+            result += "$minute"
+
+            if (second != null) {
+                result += if (second < 10) ":0$second" else ":$second"
+            }
+
+            return result
+        }
+
         fun convertRingsListToString(list: ArrayList<ArrayList<Int>>): String {
             var result = ""
 

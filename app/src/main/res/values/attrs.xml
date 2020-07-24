@@ -17,7 +17,6 @@
 
     <declare-styleable name="ClockPatternCheckbox">
         <attr name="checked" format="boolean" />
-        <attr name="title" format="string" />
     </declare-styleable>
 
     <declare-styleable name="UsefulButton">

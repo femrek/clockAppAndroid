@@ -13,7 +13,7 @@
         android:id="@+id/addPatternActivity_toolbar"
         android:layout_width="match_parent"
         android:layout_height="0px"
-        android:background="@color/bg0"
+        android:background="@color/colorPrimary"
         app:title="@string/app_name"
         app:titleTextColor="@color/onBg" />
 

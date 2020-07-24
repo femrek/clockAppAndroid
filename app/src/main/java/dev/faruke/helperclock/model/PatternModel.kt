@@ -39,4 +39,17 @@ data class PatternModel(
 ) {
     @PrimaryKey(autoGenerate = true)
     var id = 0
+
+    fun isEqual(otherPattern: PatternModel): Boolean {
+        if (otherPattern.id != id) return false
+        if (
+            otherPattern.title == title &&
+            otherPattern.startHour == startHour &&
+            otherPattern.startMinute == startMinute &&
+            otherPattern.endHour == endHour &&
+            otherPattern.endMinute == endMinute &&
+            otherPattern.ringsList == ringsList
+        ) return true
+        return false
+    }
 }

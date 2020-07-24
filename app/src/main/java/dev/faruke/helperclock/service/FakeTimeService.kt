@@ -10,6 +10,7 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
+import dev.faruke.helperclock.R
 import dev.faruke.helperclock.model.TimeModel
 import dev.faruke.helperclock.util.UtilFuns
 import dev.faruke.helperclock.view.MainActivity
@@ -22,6 +23,10 @@ class FakeTimeService : Service() {
 
     private lateinit var mHandler: Handler
     private lateinit var mRunnable: Runnable
+
+    private var notification: Notification? = null
+    private var notificationBuilder: NotificationCompat.Builder? = null
+    private var notificationManager: NotificationManager? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -41,8 +46,12 @@ class FakeTimeService : Service() {
                 ""
             }
 
-        val notificationBuilder = NotificationCompat.Builder(this, channelId )
-        val notification = notificationBuilder.setOngoing(true)
+        notificationBuilder = NotificationCompat.Builder(this, channelId )
+        val intent = Intent(this, MainActivity::class.java)
+        notification = notificationBuilder!!.setOngoing(true)
+            .setContentIntent(PendingIntent.getActivity(mainActivity,0, intent, 0))
+            .setContentTitle(resources.getString(R.string.app_name))
+            .setContentText(mainFragmentViewModel?.time?.value.toString())
             .setSmallIcon(android.R.drawable.sym_def_app_icon)
             .setPriority(PRIORITY_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
@@ -57,22 +66,20 @@ class FakeTimeService : Service() {
             channelName, NotificationManager.IMPORTANCE_NONE)
         chan.lightColor = Color.BLUE
         chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
-        val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        service.createNotificationChannel(chan)
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager!!.createNotificationChannel(chan)
         return CHANNEL_ID
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
         resumeService()
-
         return START_STICKY
     }
 
     override fun onDestroy() {
+        currentService = null
         super.onDestroy()
         pauseService()
-        currentService = null
     }
 
     fun pauseService() {
@@ -91,9 +98,13 @@ class FakeTimeService : Service() {
             //println("runnable start time: ${System.currentTimeMillis()}")
             if(isRunning) {
                 tickCounter++
-                mHandler.postDelayed(mRunnable, resumeTime + ((tickCounter+1)*1000) - System.currentTimeMillis() ) //978-985
+                mHandler.postDelayed(mRunnable, resumeTime + ((tickCounter+1)*1000) - System.currentTimeMillis() )
                 currentClock = UtilFuns.nextSecond(mainFragmentViewModel!!.time.value!!)
                 mainFragmentViewModel!!.time.value = currentClock
+                if (notificationBuilder != null && notificationManager != null) {
+                    notificationBuilder!!.setContentText(currentClock.toString())
+                    notificationManager!!.notify(101, notificationBuilder!!.build())
+                }
                 if (currentClock.minute == nextClock!!.minute && currentClock.hour == nextClock!!.hour) {
                     //todo : ring
                     setNextClock()

@@ -44,7 +44,6 @@ class ClockPatternCheckbox : FrameLayout, Checkable{
         val ta = context.obtainStyledAttributes(attrs, R.styleable.ClockPatternCheckbox, 0, 0)
         try {
             val attrChecked = ta.getBoolean(R.styleable.ClockPatternCheckbox_checked, false)
-            val attrTitle = ta.getString(R.styleable.ClockPatternCheckbox_title)
             setChecked(attrChecked)
             if (attrChecked) { //replace
                 checkedSettings()
@@ -52,9 +51,6 @@ class ClockPatternCheckbox : FrameLayout, Checkable{
                 uncheckedSettings()
             }
 
-            if (attrTitle != null) {
-                viewClock_patternCheckbox_text.text = attrTitle
-            }
         } finally {
             ta.recycle()
         }
