@@ -89,7 +89,7 @@ class MainFragment : Fragment() {
             field = value
             value.setChecked(true)
             if (value.pattern != null) {
-                currentPatternTitle = value.pattern!!.title
+                viewModel!!.titleText.value = value.pattern!!.title
                 startClock =
                     TimeModel(value.pattern!!.startHour, value.pattern!!.startMinute, 0)
                 viewModel?.let { it.time.value = startClock }
@@ -253,6 +253,11 @@ class MainFragment : Fragment() {
 
         viewModel!!.refreshPatternsCheckboxes.observe(viewLifecycleOwner, Observer { value ->
             addPatterns()
+        })
+
+        viewModel!!.titleText.observe(viewLifecycleOwner, Observer {
+            currentPatternTitle = it
+            mainFragment_title.text = it
         })
     }
 
