@@ -41,8 +41,8 @@ class AddPatternActivity : AppCompatActivity() {
         if (replacePattern != null) {
             dialogAddPattern_titleEditText.setText(replacePattern!!.title)
             dialogAddPattern_startTimeView.valueHour = replacePattern!!.startHour
-            dialogAddPattern_endTimeView.valueHour = replacePattern!!.startMinute
-            dialogAddPattern_startTimeView.valueMinute = replacePattern!!.endHour
+            dialogAddPattern_startTimeView.valueMinute = replacePattern!!.startMinute
+            dialogAddPattern_endTimeView.valueHour = replacePattern!!.endHour
             dialogAddPattern_endTimeView.valueMinute = replacePattern!!.endMinute
             adapter!!.addItems(UtilFuns.convertRingsStringToArrayList(replacePattern!!.ringsList))
         }
@@ -169,6 +169,7 @@ class AddPatternActivity : AppCompatActivity() {
     }
 
     private fun dialogAddPatternCancelClick() {
+        replacePattern = null
         super.onBackPressed()
     }
 

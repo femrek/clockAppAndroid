@@ -1,12 +1,10 @@
 package dev.faruke.helperclock.view.dialogs
 
 import android.app.Dialog
-import android.content.Context
 import android.graphics.Point
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
-import androidx.fragment.app.FragmentActivity
 import dev.faruke.helperclock.R
 import dev.faruke.helperclock.service.FakeTimeService.Companion.mainFragmentViewModel
 import dev.faruke.helperclock.view.MainFragment
