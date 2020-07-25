@@ -127,6 +127,7 @@ class FakeTimeService : Service() {
         const val CHANNEL_ID = "notificationChannelID"
 
 
+        var currentPatternTitle: String? = null
         var nextClock: TimeModel? = null
         var startClock: TimeModel? = null
         var endClock: TimeModel? = null

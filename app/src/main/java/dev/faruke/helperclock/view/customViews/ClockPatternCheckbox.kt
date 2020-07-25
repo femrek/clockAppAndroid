@@ -59,12 +59,12 @@ class ClockPatternCheckbox : FrameLayout, Checkable{
 
     fun checkedSettings() {
         viewClock_patternCheckbox_icon.setImageResource(R.drawable.ic_icon_done_white)
-        viewClock_patternCheckbox_iconBg.visibility = View.VISIBLE
+        viewClock_patternCheckbox_iconBg.setBackgroundResource(R.drawable.custom_add_button_view_bg)
     }
 
     fun uncheckedSettings() {
         viewClock_patternCheckbox_icon.setImageResource(R.drawable.ic_icon_done_disabled)
-        viewClock_patternCheckbox_iconBg.visibility = View.INVISIBLE
+        viewClock_patternCheckbox_iconBg.setBackgroundResource(R.drawable.custom_clock_view_bg)
     }
 
 

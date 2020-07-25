@@ -47,7 +47,7 @@ class ConfirmShutdownServiceAndCheckDialog(
     private fun allowClick() {
         mainFragmentViewModel?.terminateButtonClick(context)
         currentService = null
-        mainFragment.checkAndUpdateCurrentPatternOnDrawer(clockPatternCheckbox)
+        mainFragment.selectedPatternView = clockPatternCheckbox
         dismiss()
     }
 

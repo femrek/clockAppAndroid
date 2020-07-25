@@ -76,6 +76,17 @@ abstract class UtilFuns {
             return result
         }
 
+        fun convertRingTimeModelsListToString(list: ArrayList<TimeModel>): String {
+            val convertedList = ArrayList<ArrayList<Int>>()
+            for (inputRow in list) {
+                val outputRow = ArrayList<Int>()
+                outputRow.add(inputRow.hour)
+                outputRow.add(inputRow.minute)
+                convertedList.add(outputRow)
+            }
+            return convertRingsListToString(convertedList)
+        }
+
         fun convertRingsStringToArrayList(string: String): ArrayList<ArrayList<Int>> {
             val result: ArrayList<ArrayList<Int>> = ArrayList()
 
@@ -95,7 +106,6 @@ abstract class UtilFuns {
                 startIndex = string.indexOf(";", startIndex) + 1
                 result.add(rowList)
             }
-
             return result
         }
 

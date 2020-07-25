@@ -7,7 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import dev.faruke.helperclock.R
+import dev.faruke.helperclock.model.PatternModel
 import dev.faruke.helperclock.service.FakeTimeService
+import dev.faruke.helperclock.util.GlobalVariables.Companion.replacePattern
+import dev.faruke.helperclock.util.UtilFuns
 import dev.faruke.helperclock.view.adapters.AddPatternDialogRingsRecyclerViewAdapter
 import dev.faruke.helperclock.view.customViews.ClockEditView
 import dev.faruke.helperclock.view.dialogs.TimePickerDialog
@@ -21,22 +24,34 @@ class AddPatternActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_pattern)
         setSupportActionBar(addPatternActivity_toolbar)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) window.statusBarColor = ContextCompat.getColor(this, R.color.colorPrimaryDark)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) window.statusBarColor =
+            ContextCompat.getColor(this, R.color.colorPrimaryDark)
         dialogAddPattern_startTimeView.setOnClickListener { startTimeClick(it as ClockEditView) }
         dialogAddPattern_endTimeView.setOnClickListener { endTimeClick(it as ClockEditView) }
         dialogAddPattern_cancelButton.setOnClickListener { dialogAddPatternCancelClick() }
         dialogAddPattern_saveButton.setOnClickListener { dialogAddPatternSaveClick() }
-        dialogAddPattern_addRing.setOnClickListener{ addRingTimeClick() }
+        dialogAddPattern_addRing.setOnClickListener { addRingTimeClick() }
 
         adapter = AddPatternDialogRingsRecyclerViewAdapter(this)
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         dialogAddPattern_ringsRecyclerView.layoutManager = layoutManager
         dialogAddPattern_ringsRecyclerView.adapter = adapter
+
+
+        if (replacePattern != null) {
+            dialogAddPattern_titleEditText.setText(replacePattern!!.title)
+            dialogAddPattern_startTimeView.valueHour = replacePattern!!.startHour
+            dialogAddPattern_endTimeView.valueHour = replacePattern!!.startMinute
+            dialogAddPattern_startTimeView.valueMinute = replacePattern!!.endHour
+            dialogAddPattern_endTimeView.valueMinute = replacePattern!!.endMinute
+            adapter!!.addItems(UtilFuns.convertRingsStringToArrayList(replacePattern!!.ringsList))
+        }
+
     }
 
     private fun startTimeClick(view: ClockEditView) {
         val dialog = TimePickerDialog(view)
-        dialog.show(this .supportFragmentManager, "picker")
+        dialog.show(this.supportFragmentManager, "picker")
     }
 
     private fun endTimeClick(view: ClockEditView) {
@@ -57,30 +72,63 @@ class AddPatternActivity : AppCompatActivity() {
         val endHour = dialogAddPattern_endTimeView.valueHour
         val endMinute = dialogAddPattern_endTimeView.valueMinute
         val ringClockList = ArrayList<ArrayList<Int>>()
-        for (row : ArrayList<Int> in adapter!!.itemList) {
+        for (row: ArrayList<Int> in adapter!!.itemList) {
             ringClockList.add(row)
         }
 
-        val errorMessage = validateForm(sessionTitle, startHour, startMinute, endHour, endMinute, ringClockList)
-        if (errorMessage == null){
-            FakeTimeService.mainFragmentViewModel!!.savePatternToDB(sessionTitle, startHour, startMinute, endHour, endMinute, ringClockList)
+        val errorMessage =
+            validateForm(sessionTitle, startHour, startMinute, endHour, endMinute, ringClockList)
+        if (errorMessage == null) {
+            if (replacePattern != null) {
+                FakeTimeService.mainFragmentViewModel!!.replacePatternAt(
+                    replacePattern!!.id,
+                    PatternModel(
+                        sessionTitle,
+                        startHour,
+                        startMinute,
+                        endHour,
+                        endMinute,
+                        UtilFuns.convertRingsListToString(ringClockList)
+                    )
+                )
+                replacePattern = null
+            } else {
+                FakeTimeService.mainFragmentViewModel!!.savePatternToDB(
+                    sessionTitle,
+                    startHour,
+                    startMinute,
+                    endHour,
+                    endMinute,
+                    ringClockList
+                )
+            }
             finish()
-        }
-        else {
+        } else {
             addPatternActivity_errorMessage.text = errorMessage
             addPatternActivity_errorMessage.visibility = View.VISIBLE
         }
 
     }
 
-    private fun validateForm(sessionTitle: String, startHour: Int, startMinute: Int, endHour: Int, endMinute: Int, ringClockList: ArrayList<ArrayList<Int>>) : String? {
+    private fun validateForm(
+        sessionTitle: String,
+        startHour: Int,
+        startMinute: Int,
+        endHour: Int,
+        endMinute: Int,
+        ringClockList: ArrayList<ArrayList<Int>>
+    ): String? {
         if (sessionTitle.isEmpty()) return "Sınav ismi boş bırakılamaz"
+        if (sessionTitle.length > 10) return "Sınav ismi en fazla 10 harfli olabilir"
 
         if (startHour == endHour && startMinute == endMinute) return "Başlangıç ve bitiş saati aynı olmaz"
-        val isHaveMidnight = (startHour > endHour || (startHour == endHour && startMinute > endMinute))
+        val isHaveMidnight =
+            (startHour > endHour || (startHour == endHour && startMinute > endMinute))
 
-        val ringTimeEqualStartOrEndTimeErrorMessage = "Bir uyarı saati başlangıç veya bitiş saati ile aynı olamaz"
-        val ringTimeOutOfStartAndEndErrorMessage = "Uyarı saatleri başlangıç saati ile bitiş saati arasında olmalıdır"
+        val ringTimeEqualStartOrEndTimeErrorMessage =
+            "Bir uyarı saati başlangıç veya bitiş saati ile aynı olamaz"
+        val ringTimeOutOfStartAndEndErrorMessage =
+            "Uyarı saatleri başlangıç saati ile bitiş saati arasında olmalıdır"
         for ((index, row) in ringClockList.withIndex()) {
             if (isHaveMidnight) {
                 var startValidate: Boolean
@@ -93,7 +141,7 @@ class AddPatternActivity : AppCompatActivity() {
                     } else startValidate = true
                 } else startValidate = false
                 if (row[0] <= endHour) {
-                    if (row[0] == endHour){
+                    if (row[0] == endHour) {
                         if (row[1] == endMinute) return ringTimeEqualStartOrEndTimeErrorMessage
                         else endValidate = row[1] < endMinute
                     } else endValidate = true
@@ -109,7 +157,7 @@ class AddPatternActivity : AppCompatActivity() {
                     }
                 } else return ringTimeOutOfStartAndEndErrorMessage
                 if (row[0] <= endHour) {
-                    if (row[0] == endHour){
+                    if (row[0] == endHour) {
                         if (row[1] == endMinute) return ringTimeEqualStartOrEndTimeErrorMessage
                         if (row[1] > endMinute) return ringTimeOutOfStartAndEndErrorMessage
                     }

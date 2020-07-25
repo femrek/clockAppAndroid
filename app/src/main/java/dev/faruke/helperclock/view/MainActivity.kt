@@ -4,14 +4,17 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.navigation.NavigationView
 import dev.faruke.helperclock.R
 import dev.faruke.helperclock.service.FakeTimeService.Companion.mainActivity
+import dev.faruke.helperclock.service.FakeTimeService.Companion.mainFragmentViewModel
 import dev.faruke.helperclock.view.customViews.RingClockCheckbox
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -51,13 +54,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        println("on restart")
-        if (fragment is MainFragment){
-            val mainFragment = fragment as MainFragment
-            mainFragment.addPatterns()
-        } else println("fragment is not main fragment")
+    override fun onBackPressed() {
+        if (mainActivity_drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mainActivity_drawerLayout.close()
+        } else {
+            super.onBackPressed()
+        }
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        mainFragmentViewModel?.refreshPatternsCheckboxes?.value = true
+    }
 }

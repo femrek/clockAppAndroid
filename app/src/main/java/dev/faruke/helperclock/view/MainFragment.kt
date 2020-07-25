@@ -8,22 +8,21 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.children
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.navigation.NavigationView
 import dev.faruke.helperclock.R
 import dev.faruke.helperclock.model.PatternModel
 import dev.faruke.helperclock.model.TimeModel
+import dev.faruke.helperclock.service.FakeTimeService.Companion.currentPatternTitle
 import dev.faruke.helperclock.service.FakeTimeService.Companion.currentService
 import dev.faruke.helperclock.service.FakeTimeService.Companion.endClock
 import dev.faruke.helperclock.service.FakeTimeService.Companion.mutedRings
 import dev.faruke.helperclock.service.FakeTimeService.Companion.ringClocks
 import dev.faruke.helperclock.service.FakeTimeService.Companion.startClock
 import dev.faruke.helperclock.util.UtilFuns
-import dev.faruke.helperclock.view.customViews.ClockEditView
-import dev.faruke.helperclock.view.customViews.ClockPatternCheckbox
-import dev.faruke.helperclock.view.customViews.ClockViewer
-import dev.faruke.helperclock.view.customViews.RingClockCheckbox
+import dev.faruke.helperclock.view.customViews.*
 import dev.faruke.helperclock.view.dialogs.ConfirmShutdownServiceAndCheckDialog
 import dev.faruke.helperclock.view.dialogs.ConfirmShutdownServiceDialog
 import dev.faruke.helperclock.service.FakeTimeService.Companion.mainFragmentViewModel as viewModel
@@ -44,11 +43,23 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (viewModel == null) {
+        /*if (viewModel == null) {
             viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
             mainFragment_pause.isEnabled = false
             mainFragment_terminateButton.isEnabled = false
+        }*/
+
+        if (currentService != null) {
+            mainFragment_start.isEnabled = false
+            mainFragment_pause.isEnabled = true
+            mainFragment_terminateButton.isEnabled = true
+        } else {
+            mainFragment_start.isEnabled = true
+            mainFragment_pause.isEnabled = false
+            mainFragment_terminateButton.isEnabled = false
         }
+
+        if (viewModel == null) viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         mainFragment_start.setOnClickListener {
             viewModel!!.startButtonClick(context, this)
@@ -64,7 +75,7 @@ class MainFragment : Fragment() {
         }
 
         header = view.rootView.findViewById<NavigationView>(R.id.navigationView).getHeaderView(0)
-        addPatterns()
+        viewModel!!.refreshPatternsCheckboxes.value = true
 
         observeLiveData()
     }
@@ -78,12 +89,14 @@ class MainFragment : Fragment() {
             field = value
             value.setChecked(true)
             if (value.pattern != null) {
+                currentPatternTitle = value.pattern!!.title
                 startClock =
                     TimeModel(value.pattern!!.startHour, value.pattern!!.startMinute, 0)
                 viewModel?.let { it.time.value = startClock }
                 endClock = TimeModel(value.pattern!!.endHour, value.pattern!!.endMinute, 0)
                 ringClocks =
                     UtilFuns.convertRingsStringToTimeModelArrayList(value.pattern!!.ringsList)
+                updateCurrentPatternOnTheDrawer()
             }
         }
 
@@ -118,16 +131,11 @@ class MainFragment : Fragment() {
     }
 
 
-    fun checkAndUpdateCurrentPatternOnDrawer(checkboxView: ClockPatternCheckbox) {
-        selectedPatternView = checkboxView
-        updateCurrentPatternOnTheDrawer()
-    }
-
     val patternCheckboxClickListener = View.OnClickListener {
         val checkboxView = it as ClockPatternCheckbox
         if (selectedPatternView != null && selectedPatternView!!.pattern != null && checkboxView.pattern != null && selectedPatternView!!.pattern!!.isEqual(checkboxView.pattern!!))
         else if (currentService == null) {
-            checkAndUpdateCurrentPatternOnDrawer(checkboxView)
+            selectedPatternView = checkboxView
         } else {
             val dialog = ConfirmShutdownServiceAndCheckDialog(
                 requireContext(),
@@ -155,28 +163,41 @@ class MainFragment : Fragment() {
         }
     }
 
-
-    private fun observeLiveData() {
-        viewModel!!.time.observe(viewLifecycleOwner, Observer { time ->
-            time?.let {
-                mainFragment_clock.clock = time
+    fun checkTheCheckboxForCurrentPattern() {
+        if (header == null) {
+            println("header is null")
+            return
+        }
+        val patternsLayout =
+            header!!.findViewById<LinearLayout>(R.id.drawer_tile1_patternsLayout)
+        if (currentPatternTitle != null && startClock != null && endClock != null && ringClocks != null)
+            for (view in patternsLayout.children) {
+                var checkboxView: ClockPatternCheckbox? = null
+                var checkboxPattern: PatternModel? = null
+                if (view is ClockPatternCheckbox) {
+                    checkboxView = view
+                    checkboxPattern = checkboxView.pattern
+                } else if (view is ClockPatternCheckboxWithActions) {
+                    checkboxView = view.clockPatternCheckbox ?: break
+                    checkboxPattern = checkboxView.pattern
+                } else {
+                    println("there is big problem")
+                    break
+                }
+                if (
+                    checkboxPattern != null &&
+                    checkboxPattern.title == currentPatternTitle &&
+                    checkboxPattern.startHour == startClock!!.hour &&
+                    checkboxPattern.startMinute == startClock!!.minute &&
+                    checkboxPattern.startHour == startClock!!.hour &&
+                    checkboxPattern.startMinute == startClock!!.minute &&
+                    checkboxPattern.ringsList == UtilFuns.convertRingTimeModelsListToString(ringClocks!!)
+                ) {
+                    checkboxView.setChecked(true)
+                    break
+                } else println("not equal")
             }
-        })
-
-        viewModel!!.startButtonEnable.observe(viewLifecycleOwner, Observer { enable ->
-            mainFragment_start.isEnabled = enable
-        })
-
-        viewModel!!.pauseButtonEnable.observe(viewLifecycleOwner, Observer { enable ->
-            mainFragment_pause.isEnabled = enable
-        })
-        viewModel!!.cancelButtonEnable.observe(viewLifecycleOwner, Observer { enable ->
-            mainFragment_terminateButton.isEnabled = enable
-        })
-
-        viewModel!!.refreshPatternsCheckboxes.observe(viewLifecycleOwner, Observer { value ->
-            addPatterns()
-        })
+        else println("once value is null")
     }
 
     fun addPatterns() {
@@ -204,7 +225,35 @@ class MainFragment : Fragment() {
 
         viewModel?.readPatternsFromDBAndShowIn(patternsLayout, this)
 
-        selectedPatternView = tytCheckbox
-        updateCurrentPatternOnTheDrawer()
+        if (currentService == null) selectedPatternView = tytCheckbox
+        else {
+            updateCurrentPatternOnTheDrawer()
+            checkTheCheckboxForCurrentPattern()
+        }
     }
+
+
+    private fun observeLiveData() {
+        viewModel!!.time.observe(viewLifecycleOwner, Observer { time ->
+            time?.let {
+                mainFragment_clock.clock = time
+            }
+        })
+
+        viewModel!!.startButtonEnable.observe(viewLifecycleOwner, Observer { enable ->
+            mainFragment_start.isEnabled = enable
+        })
+
+        viewModel!!.pauseButtonEnable.observe(viewLifecycleOwner, Observer { enable ->
+            mainFragment_pause.isEnabled = enable
+        })
+        viewModel!!.cancelButtonEnable.observe(viewLifecycleOwner, Observer { enable ->
+            mainFragment_terminateButton.isEnabled = enable
+        })
+
+        viewModel!!.refreshPatternsCheckboxes.observe(viewLifecycleOwner, Observer { value ->
+            addPatterns()
+        })
+    }
+
 }

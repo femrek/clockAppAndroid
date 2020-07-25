@@ -16,7 +16,7 @@ class ClockPatternCheckboxWithActions : FrameLayout {
 
     constructor(context: Context) : super(context) {
         init()
-        viewClockPatternCheckboxWithActions_clockPatternCheckbox.setChecked(false)
+        clockPatternCheckbox!!.setChecked(false)
     }
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init()

@@ -20,4 +20,7 @@ interface PatternsDao {
     @Query("DELETE FROM patternmodel WHERE id = :id")
     suspend fun deletePatternAt(id: Int)
 
+    @Query("UPDATE patternmodel SET title=:title, startHour=:startHour, startMinute=:startMinute, endHour=:endHour, endMinute=:endMinute, ringsList=:ringsList WHERE id = :id")
+    suspend fun replacePatternAt(id: Int, title: String, startHour: Int, startMinute: Int, endHour: Int, endMinute: Int, ringsList: String)
+
 }

@@ -90,6 +90,12 @@ class AddPatternDialogRingsRecyclerViewAdapter(private var context: Context) : R
         return addedIndex
     }
 
+    fun addItems(itemsValuesList: ArrayList<ArrayList<Int>>) {
+        for (row in itemsValuesList) {
+            addItem(row)
+        }
+    }
+
     fun removeViewAt(index: Int) {
         itemList.removeAt(index)
         notifyDataSetChanged()

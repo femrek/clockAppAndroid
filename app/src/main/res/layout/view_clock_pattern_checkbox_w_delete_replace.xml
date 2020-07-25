@@ -45,9 +45,12 @@
 
         <dev.faruke.helperclock.view.customViews.ClockPatternCheckbox
             android:id="@+id/viewClockPatternCheckboxWithActions_clockPatternCheckbox"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/viewClockPatternCheckboxWithActions_replaceIcon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
