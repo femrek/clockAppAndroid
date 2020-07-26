@@ -108,6 +108,7 @@ class FakeTimeService : Service() {
                 if (currentClock.minute == nextClock!!.minute && currentClock.hour == nextClock!!.hour) {
                     //todo : ring
                     setNextClock()
+                    println("next clock is: $nextClock")
                 }
             }
             //println("runnable end time: ${System.currentTimeMillis()}")
@@ -134,29 +135,32 @@ class FakeTimeService : Service() {
             set(value) {
                 field = value
                 setNextClock()
+                println("next clock is: $nextClock")
             }
         var ringClocks: ArrayList<TimeModel>? = null
             set(value) {
                 field = value
                 mutedRings.clear()
                 setNextClock()
+                println("next clock is: $nextClock")
             }
         val mutedRings: ArrayList<TimeModel> = ArrayList()
 
         private fun setNextClock() {
-            if (endClock != null && ringClocks != null && mainFragmentViewModel != null && mainFragmentViewModel!!.time.value != null) {
+            if (startClock != null && endClock != null && ringClocks != null && mainFragmentViewModel != null && mainFragmentViewModel!!.time.value != null) {
                 val allClockList = ArrayList<TimeModel>()
                 allClockList.addAll(ringClocks!!)
                 allClockList.add(endClock!!)
 
-                val currentClock = mainFragmentViewModel!!.time.value!!
+                val currentClock = mainFragmentViewModel!!.time.value!!.subtractionClock(startClock!!)
                 for (savedClock in allClockList) {
-                    if (currentClock.hour <= savedClock.hour){
-                        if (currentClock.hour < savedClock.hour) {
+                    val subtractedSavedClock = savedClock.subtractionClock(startClock!!)
+                    if (currentClock.hour <= subtractedSavedClock.hour){
+                        if (currentClock.hour < subtractedSavedClock.hour) {
                             nextClock = savedClock
                             return
-                        } else if (currentClock.hour == savedClock.hour){
-                            if(currentClock.minute < savedClock.minute) {
+                        } else if (currentClock.hour == subtractedSavedClock.hour){
+                            if(currentClock.minute < subtractedSavedClock.minute) {
                                 nextClock = savedClock
                                 return
                             }

@@ -82,9 +82,12 @@ class MainFragment : Fragment() {
 
     var selectedPatternView: ClockPatternCheckbox? = null
         set(value) {
+            if (currentService != null) {
+                field = checkTheCheckboxForCurrentPattern()
+                field?.setChecked(true)
+                return
+            }
             if (value == null) return
-            //println("if (${field != null} && ${field?.pattern != null} && ")//${value.pattern != null} && ${field!!.pattern!!}.isEqual(${value.pattern!!})) return")
-            if (currentService != null) return
             field?.setChecked(false)
             field = value
             value.setChecked(true)
@@ -163,10 +166,10 @@ class MainFragment : Fragment() {
         }
     }
 
-    fun checkTheCheckboxForCurrentPattern() {
+    fun checkTheCheckboxForCurrentPattern() : ClockPatternCheckbox? {
         if (header == null) {
             println("header is null")
-            return
+            return null
         }
         val patternsLayout =
             header!!.findViewById<LinearLayout>(R.id.drawer_tile1_patternsLayout)
@@ -193,11 +196,10 @@ class MainFragment : Fragment() {
                     checkboxPattern.startMinute == startClock!!.minute &&
                     checkboxPattern.ringsList == UtilFuns.convertRingTimeModelsListToString(ringClocks!!)
                 ) {
-                    checkboxView.setChecked(true)
-                    break
-                } else println("not equal")
+                    return checkboxView
+                }
             }
-        else println("once value is null")
+        return null
     }
 
     fun addPatterns() {
@@ -228,7 +230,6 @@ class MainFragment : Fragment() {
         if (currentService == null) selectedPatternView = tytCheckbox
         else {
             updateCurrentPatternOnTheDrawer()
-            checkTheCheckboxForCurrentPattern()
         }
     }
 

@@ -156,6 +156,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 clockPatternCheckboxWithActions.layoutParams = lp
                 parentView.addView(clockPatternCheckboxWithActions)
             }
+            if (currentService != null) {
+                mainFragment.selectedPatternView = null
+            }
             isReadingPatterns = false
         }
     }
