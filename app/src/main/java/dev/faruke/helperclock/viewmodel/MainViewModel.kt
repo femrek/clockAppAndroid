@@ -18,6 +18,7 @@ import dev.faruke.helperclock.service.FakeTimeService.Companion.mainActivity
 import dev.faruke.helperclock.service.FakeTimeService.Companion.startClock
 import dev.faruke.helperclock.service.PatternDatabase
 import dev.faruke.helperclock.util.GlobalVariables
+import dev.faruke.helperclock.util.LastUsedPattern
 import dev.faruke.helperclock.util.UtilFuns
 import dev.faruke.helperclock.view.AddPatternActivity
 import dev.faruke.helperclock.view.MainFragment
@@ -37,8 +38,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
 
     fun startButtonClick(context: Context?, mainFragment: MainFragment) {
-        startButtonEnable.value = false
-
         if (currentService != null) {
             resumeService()
         } else {
@@ -54,7 +53,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun pauseButtonClick() {
-        pauseButtonEnable.value = false
         if (currentService != null) {
             if (isRunning) {
                 pauseService()
@@ -63,8 +61,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun terminateButtonClick(context: Context?) {
-        pauseButtonEnable.value = false
-        cancelButtonEnable.value = false
         if (context != null) {
             val intent = Intent(context, FakeTimeService::class.java)
             stopService(intent, context)
@@ -117,16 +113,16 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     fun readPatternsFromDBAndShowIn(parentView: ViewGroup, mainFragment: MainFragment) {
         if (isReadingPatterns) return
         isReadingPatterns = true
-        println("reading data from db")
         launch {
-            println("reading data from db in launch")
             val dao = PatternDatabase(getApplication()).patternDao()
+            val lastPatternId = LastUsedPattern.getLastPattern(mainFragment.requireContext())
             val lp = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT
             )
             lp.setMargins(0, UtilFuns.dpToPx(mainFragment.requireContext(), 8f).toInt(), 0, 0)
-            for ((index, pattern) in dao.getAllPatterns().withIndex()) {
+            for (pattern in dao.getAllPatterns()) {
+                println(pattern.toString())
                 val clockPatternCheckboxWithActions =
                     ClockPatternCheckboxWithActions(mainFragment.requireContext())
                 clockPatternCheckboxWithActions.clockPatternCheckbox!!.pattern = pattern
@@ -144,7 +140,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     )
                 })
                 clockPatternCheckboxWithActions.setDeleteClickListener(View.OnClickListener {
-                    //deletePatternOf(clockPatternCheckboxWithActions.clockPatternCheckbox!!, mainFragment)
                     if (clockPatternCheckboxWithActions.clockPatternCheckbox!!.pattern != null) {
                         val dialog = ConfirmDeletePattern(
                             clockPatternCheckboxWithActions.clockPatternCheckbox!!.pattern!!.id,
@@ -155,10 +150,11 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 })
                 clockPatternCheckboxWithActions.layoutParams = lp
                 parentView.addView(clockPatternCheckboxWithActions)
+                if (mainFragment.selectedPatternView == null && lastPatternId == pattern.id)
+                    mainFragment.selectedPatternView = clockPatternCheckboxWithActions.clockPatternCheckbox
             }
-            if (currentService != null) {
-                mainFragment.selectedPatternView = null
-            }
+            if (mainFragment.selectedPatternView == null)
+                mainFragment.selectedPatternView = parentView.getChildAt(0) as ClockPatternCheckbox
             isReadingPatterns = false
         }
     }

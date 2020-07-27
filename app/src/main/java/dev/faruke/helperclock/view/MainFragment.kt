@@ -21,6 +21,7 @@ import dev.faruke.helperclock.service.FakeTimeService.Companion.endClock
 import dev.faruke.helperclock.service.FakeTimeService.Companion.mutedRings
 import dev.faruke.helperclock.service.FakeTimeService.Companion.ringClocks
 import dev.faruke.helperclock.service.FakeTimeService.Companion.startClock
+import dev.faruke.helperclock.util.LastUsedPattern
 import dev.faruke.helperclock.util.UtilFuns
 import dev.faruke.helperclock.view.customViews.*
 import dev.faruke.helperclock.view.dialogs.ConfirmShutdownServiceAndCheckDialog
@@ -100,6 +101,7 @@ class MainFragment : Fragment() {
                 ringClocks =
                     UtilFuns.convertRingsStringToTimeModelArrayList(value.pattern!!.ringsList)
                 updateCurrentPatternOnTheDrawer()
+                LastUsedPattern.saveLastPattern(requireContext(), value.pattern!!.id)
             }
         }
 
@@ -222,15 +224,24 @@ class MainFragment : Fragment() {
         tytCheckbox.layoutParams = lp
         aytCheckbox.layoutParams = lp
 
+        tytCheckbox.pattern!!.id = -1
+        aytCheckbox.pattern!!.id = -2
+
         patternsLayout.addView(tytCheckbox)
         patternsLayout.addView(aytCheckbox)
 
-        viewModel?.readPatternsFromDBAndShowIn(patternsLayout, this)
-
-        if (currentService == null) selectedPatternView = tytCheckbox
-        else {
+        if (currentService != null) {
             updateCurrentPatternOnTheDrawer()
+        } else {
+            val lastPatternId = LastUsedPattern.getLastPattern(requireContext())
+            selectedPatternView = when (lastPatternId) {
+                -1 -> tytCheckbox
+                -2 -> aytCheckbox
+                else -> null
+            }
         }
+
+        viewModel?.readPatternsFromDBAndShowIn(patternsLayout, this)
     }
 
 

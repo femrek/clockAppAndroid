@@ -52,4 +52,8 @@ data class PatternModel(
         ) return true
         return false
     }
+
+    override fun toString(): String {
+        return "id: $id | title: $title | startHour: $startHour | startMinute: $startMinute | endHour: $endHour | endMinute: $endMinute | ringsList: $ringsList"
+    }
 }

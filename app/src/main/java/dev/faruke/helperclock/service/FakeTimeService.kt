@@ -4,9 +4,11 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
@@ -15,6 +17,8 @@ import dev.faruke.helperclock.model.TimeModel
 import dev.faruke.helperclock.util.UtilFuns
 import dev.faruke.helperclock.view.MainActivity
 import dev.faruke.helperclock.viewmodel.MainViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class FakeTimeService : Service() {
@@ -72,7 +76,9 @@ class FakeTimeService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        setNextClock()
         resumeService()
+        mainFragmentViewModel!!.cancelButtonEnable.value = true
         return START_STICKY
     }
 
@@ -80,12 +86,14 @@ class FakeTimeService : Service() {
         currentService = null
         super.onDestroy()
         pauseService()
+        mainFragmentViewModel!!.cancelButtonEnable.value = false
     }
 
     fun pauseService() {
         isRunning = false
-        mainFragmentViewModel!!.startButtonEnable.value = true
         mHandler.removeCallbacks(mRunnable)
+        mainFragmentViewModel!!.pauseButtonEnable.value = false
+        mainFragmentViewModel!!.startButtonEnable.value = true
     }
 
     fun resumeService() {
@@ -106,9 +114,24 @@ class FakeTimeService : Service() {
                     notificationManager!!.notify(101, notificationBuilder!!.build())
                 }
                 if (currentClock.minute == nextClock!!.minute && currentClock.hour == nextClock!!.hour) {
-                    //todo : ring
-                    setNextClock()
-                    println("next clock is: $nextClock")
+                    GlobalScope.launch {
+                        var isMuted = false
+                        for (mutedTime in mutedRings) {
+                            if (currentClock.hour == mutedTime.hour && currentClock.minute == mutedTime.minute) {
+                                isMuted = true
+                                break
+                            }
+                        }
+                        val mediaPlayer = MediaPlayer.create(currentService, Settings.System.DEFAULT_NOTIFICATION_URI)
+                        if (currentClock.hour == endClock!!.hour && currentClock.minute == endClock!!.minute) {
+                            currentService?.stopSelf()
+                            mediaPlayer.start()
+                            nextClock = null
+                        } else {
+                            if (!isMuted) mediaPlayer.start()
+                            setNextClock()
+                        }
+                    }
                 }
             }
             //println("runnable end time: ${System.currentTimeMillis()}")
@@ -116,6 +139,7 @@ class FakeTimeService : Service() {
         mHandler.postDelayed(mRunnable, 1000)
 
         mainFragmentViewModel!!.pauseButtonEnable.value = true
+        mainFragmentViewModel!!.startButtonEnable.value = false
     }
 
     companion object {
@@ -135,14 +159,12 @@ class FakeTimeService : Service() {
             set(value) {
                 field = value
                 setNextClock()
-                println("next clock is: $nextClock")
             }
         var ringClocks: ArrayList<TimeModel>? = null
             set(value) {
                 field = value
                 mutedRings.clear()
                 setNextClock()
-                println("next clock is: $nextClock")
             }
         val mutedRings: ArrayList<TimeModel> = ArrayList()
 
