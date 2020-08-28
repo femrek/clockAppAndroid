@@ -102,7 +102,8 @@ class AddPatternActivity : AppCompatActivity() {
                     ringClockList
                 )
             }
-            finish()
+            //finish()
+            super.onBackPressed()
         } else {
             addPatternActivity_errorMessage.text = errorMessage
             addPatternActivity_errorMessage.visibility = View.VISIBLE

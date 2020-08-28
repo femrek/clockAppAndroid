@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.dialog_confirm_delete_pattern.*
 
 class ConfirmDeletePattern(
     private val patternId: Int,
+    private val patternTitle: String,
     private val mainFragment: MainFragment
 ) :
     Dialog(mainFragment.requireContext()) {
@@ -22,6 +23,7 @@ class ConfirmDeletePattern(
         setContentView(R.layout.dialog_confirm_delete_pattern)
         dialogConfirmDeletePattern_allowButton.setOnClickListener { allowClick() }
         dialogConfirmDeletePattern_cancelButton.setOnClickListener { cancelClick() }
+        dialogConfirmDeletePattern_text.text = "$patternTitle isimli kaydı silmek istediğinize emin misiniz?"
 
         window?.let {
             val size = Point()

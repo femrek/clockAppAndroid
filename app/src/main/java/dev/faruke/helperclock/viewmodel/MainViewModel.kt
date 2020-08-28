@@ -111,51 +111,56 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun readPatternsFromDBAndShowIn(parentView: ViewGroup, mainFragment: MainFragment) {
-        if (isReadingPatterns) return
-        isReadingPatterns = true
         launch {
-            val dao = PatternDatabase(getApplication()).patternDao()
-            val lastPatternId = LastUsedPattern.getLastPattern(mainFragment.requireContext())
-            val lp = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-            )
-            lp.setMargins(0, UtilFuns.dpToPx(mainFragment.requireContext(), 8f).toInt(), 0, 0)
-            for (pattern in dao.getAllPatterns()) {
-                println(pattern.toString())
-                val clockPatternCheckboxWithActions =
-                    ClockPatternCheckboxWithActions(mainFragment.requireContext())
-                clockPatternCheckboxWithActions.clockPatternCheckbox!!.pattern = pattern
-                clockPatternCheckboxWithActions.clockPatternCheckbox!!.setOnClickListener(
-                    mainFragment.patternCheckboxClickListener
+            try {
+                val dao = PatternDatabase(getApplication()).patternDao()
+                val lastPatternId = LastUsedPattern.getLastPattern(mainFragment.requireContext())
+                val lp = FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT
                 )
-                clockPatternCheckboxWithActions.setReplaceClickListener(View.OnClickListener {
-                    GlobalVariables.replacePattern =
-                        clockPatternCheckboxWithActions.clockPatternCheckbox!!.pattern
-                    mainActivity?.startActivity(
-                        Intent(
-                            mainFragment.requireContext(),
-                            AddPatternActivity::class.java
-                        )
+                lp.setMargins(0, UtilFuns.dpToPx(mainFragment.requireContext(), 8f).toInt(), 0, 0)
+                for (pattern in dao.getAllPatterns()) {
+                    println(pattern.toString())
+                    val clockPatternCheckboxWithActions =
+                        ClockPatternCheckboxWithActions(mainFragment.requireContext())
+                    clockPatternCheckboxWithActions.clockPatternCheckbox!!.pattern = pattern
+                    clockPatternCheckboxWithActions.clockPatternCheckbox!!.setOnClickListener(
+                        mainFragment.patternCheckboxClickListener
                     )
-                })
-                clockPatternCheckboxWithActions.setDeleteClickListener(View.OnClickListener {
-                    if (clockPatternCheckboxWithActions.clockPatternCheckbox!!.pattern != null) {
-                        val dialog = ConfirmDeletePattern(
-                            clockPatternCheckboxWithActions.clockPatternCheckbox!!.pattern!!.id,
-                            mainFragment
+                    clockPatternCheckboxWithActions.setReplaceClickListener(View.OnClickListener {
+                        GlobalVariables.replacePattern =
+                            clockPatternCheckboxWithActions.clockPatternCheckbox!!.pattern
+                        mainActivity?.startActivity(
+                            Intent(
+                                mainFragment.requireContext(),
+                                AddPatternActivity::class.java
+                            )
                         )
-                        dialog.show()
-                    }
-                })
-                clockPatternCheckboxWithActions.layoutParams = lp
-                parentView.addView(clockPatternCheckboxWithActions)
-                if (mainFragment.selectedPatternView == null && lastPatternId == pattern.id)
-                    mainFragment.selectedPatternView = clockPatternCheckboxWithActions.clockPatternCheckbox
+                    })
+                    clockPatternCheckboxWithActions.setDeleteClickListener(View.OnClickListener {
+                        if (clockPatternCheckboxWithActions.clockPatternCheckbox!!.pattern != null) {
+                            val dialog = ConfirmDeletePattern(
+                                clockPatternCheckboxWithActions.clockPatternCheckbox!!.pattern!!.id,
+                                clockPatternCheckboxWithActions.clockPatternCheckbox!!.pattern!!.title,
+                                mainFragment
+                            )
+                            dialog.show()
+                        }
+                    })
+                    clockPatternCheckboxWithActions.layoutParams = lp
+                    parentView.addView(clockPatternCheckboxWithActions)
+                    if (lastPatternId == pattern.id)
+                        mainFragment.selectedPatternView = clockPatternCheckboxWithActions.clockPatternCheckbox
+                }
+                if (mainFragment.selectedPatternView == null)
+                    mainFragment.selectedPatternView = parentView.getChildAt(0) as ClockPatternCheckbox
+                isReadingPatterns = false
+            } catch (e: IllegalStateException) {
+                println("require context error")
+            } finally {
+                isReadingPatterns = false
             }
-            if (mainFragment.selectedPatternView == null)
-                mainFragment.selectedPatternView = parentView.getChildAt(0) as ClockPatternCheckbox
-            isReadingPatterns = false
         }
     }
 

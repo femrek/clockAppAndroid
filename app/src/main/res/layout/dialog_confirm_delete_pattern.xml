@@ -13,10 +13,11 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/dialogConfirmDeletePattern_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Bu kaydı silmek istediğinize emin misiniz?"
+            android:text=""
             android:textColor="@color/onBg"
             android:textSize="22sp" />
 

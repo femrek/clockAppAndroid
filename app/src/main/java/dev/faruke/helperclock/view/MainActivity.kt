@@ -1,6 +1,7 @@
 package dev.faruke.helperclock.view
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         mainActivity = this
         setContentView(R.layout.activity_main)
         setSupportActionBar(mainActivity_toolbar)
+        requestedOrientation = (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 
         navController = findNavController(R.id.fragment)
         navigationView.setupWithNavController(navController)
@@ -64,6 +66,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRestart() {
         super.onRestart()
-        mainFragmentViewModel?.refreshPatternsCheckboxes?.value = true
+        mainFragmentViewModel.let {
+            it!!.refreshPatternsCheckboxes.value = true
+        }
     }
 }

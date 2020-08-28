@@ -28,6 +28,7 @@ import dev.faruke.helperclock.view.dialogs.ConfirmShutdownServiceAndCheckDialog
 import dev.faruke.helperclock.view.dialogs.ConfirmShutdownServiceDialog
 import dev.faruke.helperclock.service.FakeTimeService.Companion.mainFragmentViewModel as viewModel
 import dev.faruke.helperclock.viewmodel.MainViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 
 class MainFragment : Fragment() {
@@ -206,6 +207,8 @@ class MainFragment : Fragment() {
 
     fun addPatterns() {
         if (header == null) return
+        if (MainViewModel.isReadingPatterns) return
+        MainViewModel.isReadingPatterns = true
         val patternsLayout =
             header!!.findViewById<LinearLayout>(R.id.drawer_tile1_patternsLayout)
         patternsLayout.removeAllViews()
