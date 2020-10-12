@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">helperClock</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="app_name">Sınav Saati</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_drawer_deneme">DrawerDenemeActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
