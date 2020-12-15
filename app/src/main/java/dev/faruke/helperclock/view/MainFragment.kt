@@ -45,12 +45,6 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*if (viewModel == null) {
-            viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-            mainFragment_pause.isEnabled = false
-            mainFragment_terminateButton.isEnabled = false
-        }*/
-
         if (currentService != null) {
             mainFragment_start.isEnabled = false
             mainFragment_pause.isEnabled = true
@@ -217,7 +211,7 @@ class MainFragment : Fragment() {
         lp.setMargins(0,UtilFuns.dpToPx(requireContext(), 8f).toInt(),0,0)
 
         val tytCheckbox = ClockPatternCheckbox(requireContext())
-        tytCheckbox.pattern = PatternModel("TYT", 10, 15, 13, 0, "12,55;12,59;")
+        tytCheckbox.pattern = PatternModel("TYT", 10, 15, 12, 30, "12,25;12,29;")
         val aytCheckbox = ClockPatternCheckbox(requireContext())
         aytCheckbox.pattern = PatternModel("AYT", 10, 15, 13, 15, "13,10;13,14;")
 
