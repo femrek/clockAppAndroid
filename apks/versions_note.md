@@ -1,5 +1,5 @@
 v1.0.0;
-    - release app
+- release app
 
 v1.0.1;
-    - updated TYT pattern
+- updated TYT pattern
